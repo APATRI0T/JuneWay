@@ -1,0 +1,33 @@
+FROM debian:9 as build
+RUN apt update && \
+    apt install -y \
+        wget \
+        gcc \
+        make  \
+        libpcre3 \
+        libpcre3-dev \
+        zlib1g \
+        zlib1g-dev \
+        libssl-dev
+RUN wget http://nginx.org/download/nginx-1.20.0.tar.gz 
+wget https://github.com/openresty/luajit2/archive/refs/tags/v2.1-20201229.tar.gz
+wget https://github.com/vision5/ngx_devel_kit/archive/refs/tags/v0.3.1.tar.gz
+wget https://github.com/openresty/lua-nginx-module/archive/refs/tags/v0.10.19.tar.gz
+&& \
+    tar -xzvf nginx-1.19.3.tar.gz && \
+    cd nginx-1.19.3 && \
+    export LUAJIT_LIB=/path/to/luajit/lib && \
+    export LUAJIT_INC=/path/to/luajit/include/luajit-2.1 && \
+    ./configure --prefix=/opt/nginx \
+         --with-ld-opt="-Wl,-rpath,/path/to/luajit/lib" \
+         --add-module=/path/to/ngx_devel_kit \
+         --add-module=/path/to/lua-nginx-module
+
+    ./configure && \
+    make && make -j4 install 
+
+FROM debian:9
+WORKDIR /usr/local/nginx/sbin
+COPY --from=build /usr/local/nginx/sbin/nginx .
+RUN mkdir ../logs && mkdir ../conf && touch ../logs/error.log && chmod +x nginx
+CMD ["./nginx", "-g", "daemon off;"]
