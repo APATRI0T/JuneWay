@@ -4,7 +4,7 @@ echo "start dind" && docker run -d \
     --name=dind \
     --privileged \
     -v /srv/juneway/less5-dind/DIND:/DIND \
-    docker:dind \
+    docker:dind 
     # sh
     # -it \
     # --rm \
