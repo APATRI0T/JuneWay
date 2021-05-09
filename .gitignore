@@ -1,3 +1,7 @@
 /less4-docker/tmp/*
 /less4-docker/nginx-lua/*
+/less6-compose/django_blog/.git
+/less6-compose/django_blog/.idea
+/less6-compose/django_blog/.gitignore
+
 
