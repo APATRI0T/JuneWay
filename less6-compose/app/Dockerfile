@@ -12,7 +12,7 @@ RUN set -ex \
         | sort -u \
         | xargs -r apk info --installed \
         | sort -u)" \
-    && apk add --virtual rundeps $runDeps \
+    && docapk add --virtual rundeps $runDeps \
     && apk del .build-deps
 
 WORKDIR /app
@@ -22,4 +22,4 @@ ENV PATH /env/bin:$PATH
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "mysite.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "asgi:application"]
