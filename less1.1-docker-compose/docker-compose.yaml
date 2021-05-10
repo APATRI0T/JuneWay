@@ -1,0 +1,31 @@
+version: '3'
+# https://docs.docker.com/compose/compose-file/compose-file-v3
+# https://docs.docker.com/compose/networking/
+services:
+    app:
+        restart: unless-stopped
+        build: ./app
+        expose: 
+            - "8000"
+        container_name: less11_app
+    web:
+        restart: unless-stopped
+        build: 
+            context:  ./
+            dockerfile: ./nginx/Dockerfile
+        ports:
+            - "8000:8000"
+        container_name: less11_web
+    db:
+        restart: always
+        image: postgres:12.0-alpine
+        volumes: 
+            - postgres_data:/var/lib/postgresql/data
+        environment: 
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=postgres
+        ports: 
+            - "5432:5432"
+        container_name: less11_db            
+volumes: 
+    postgres_data:

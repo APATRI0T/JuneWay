@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-COPY ./django_blog/ /app
+COPY ./django_blog/requirements.txt  /app/
 
 RUN set -ex \
     && apk add --no-cache --virtual .build-deps postgresql-dev build-base \
@@ -12,13 +12,16 @@ RUN set -ex \
         | sort -u \
         | xargs -r apk info --installed \
         | sort -u)" \
-    && docapk add --virtual rundeps $runDeps \
+    && apk add --virtual rundeps $runDeps \
     && apk del .build-deps
 
+COPY ./django_blog/  /app
 WORKDIR /app
 
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
+# ENV PYTHONDONTWRITEBYTECODE 1
+# ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
