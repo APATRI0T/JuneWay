@@ -37,17 +37,28 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo curl     -L https://raw.githubusercontent.com/docker/compose/1.29.1/contrib/completion/bash/docker-compose     -o /etc/bash_completion.d/docker-compose
 source ~/.bashrc
 
-cd /srv/
-git clone github.com:APATRI0T/JuneWay.git
+cd /srv/JuneWay/less1.1-docker-compose
+git clone https://gitlab.com/chumkaska1/django_blog.git
 ```
-# 2. Docker-compose
+# 2.  создаем network\volume 
 ```bash
-docker-compose build
-docker-compose up # для отладки
-docker-compose up -d # Detached mode
-
+docker volume create less11_django_static
+docker network create DjangoBlog
 ```
-# 3. Подготовка django приложения
+# 3. Dockerfile для django контейнера:
+> app/Dockerfile
+# 4. Docker-compose yaml
+> docker-compose.yaml
+```bash
+# собираем
+docker-compose build
+# запускаем тестовый режим
+docker-compose up
+# запускаем в фоновом режиме
+docker-compose up -d
+```
+
+# 5. Подготовка django приложения
 > https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker#step-6-%E2%80%94-writing-the-application-dockerfile
 > 
 ```bash
@@ -57,22 +68,19 @@ docker exec -it less11_app sh -c "python manage.py makemigrations && python mana
 docker exec -it less11_app sh # заходим в контейнер
 python manage.py createsuperuser
 ```
-# 3. Dockerfile для django контейнера:
 
-```Bash
-app/Dockerfile
-# Сборка 
-docker build -t django:v1 .
-```
-
-# 4. docker network\volume 
+# 6. Исправляем косяки
+1. Ошибка `ModuleNotFoundError: No module named 'Blog.wsgi'` = скопировать файл wsgi.py в Blog/wsgi.py
+2. в app/django_blog/config/django.conf исзменить имя сервера `web` на `app`
 ```bash
-docker volume create django_static
-docker volume create django_blog
-
- docker network create DjangoBlog_back
- docker network create DjangoBlog_front
+   upstream web {
+   ip_hash;
+   server app:8000;
+ }
 ```
 
-> https://semaphoreci.com/community/tutorials/dockerizing-a-python-django-web-application
-    > https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker
+
+# Done! Мы молодцы
+## Ссылочки:
+> https://semaphoreci.com/community/tutorials/dockerizing-a-python-django-web-application  
+> https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker
