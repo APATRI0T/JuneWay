@@ -10,7 +10,7 @@ services:
             - "8000"
         container_name: less11_app
         volumes: 
-            - django_blog:/app/
+            - ./app/django_blog:/app/
             - django_static:/app/static/
         networks: 
                 - netfront
@@ -46,10 +46,6 @@ services:
 volumes: 
     postgres_data:
             name: less11_postgres_data
-    django_blog:
-        external: 
-            name: django_blog
-        read_only: true
     django_static:
         external: 
             name: django_static
