@@ -43,16 +43,18 @@ git clone github.com:APATRI0T/JuneWay.git
 # 2. Docker-compose
 ```bash
 docker-compose build
-docker-compose up -d
+docker-compose up # для отладки
+docker-compose up -d # Detached mode
+
 ```
 # 3. Подготовка django приложения
 > https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker#step-6-%E2%80%94-writing-the-application-dockerfile
 > 
 ```bash
 # Инициализируем джангу
-docker run -it nginx:serg-v1 sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic"
+docker exec -it less11_app sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic"
 # Создаем пользователя 
-docker run -it nginx:serg-v1 sh # заходим в контейнер
+docker exec -it less11_app sh # заходим в контейнер
 python manage.py createsuperuser
 ```
 # 3. Dockerfile для django контейнера:
@@ -63,13 +65,14 @@ app/Dockerfile
 docker build -t django:v1 .
 ```
 
-# 4. docker network
+# 4. docker network\volume 
 ```bash
+docker volume create django_static
+docker volume create django_blog
 
+ docker network create DjangoBlog_back
+ docker network create DjangoBlog_front
 ```
-TODO Осталось:
-1. разобраться с volume
-2. подключить статику в контейнер с веб
-3. подключить волюм в котейнер с приложением, забрать статику
+
 > https://semaphoreci.com/community/tutorials/dockerizing-a-python-django-web-application
     > https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker
