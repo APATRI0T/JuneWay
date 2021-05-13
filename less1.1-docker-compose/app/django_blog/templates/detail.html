@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+        <a class="mt-4" href="/">вернуться назад</a>
+    <h1 class="mt-4">{{ detail_page.title }}</h1>
+
+
+       <h3>{{ i.title }}</h3>
+        <li class="list-group-item">
+           {{ detail_page.text }}<br>
+            <b>{{ detail_page.create_date }}</b> <br>
+
+
+
+
+{% endblock content %}

@@ -5,6 +5,7 @@ services:
     app:
         restart: unless-stopped
         build: ./app
+        command: python manage.py runserver 0.0.0.0:8000
         expose: 
             - "8000"
         container_name: less11_app
@@ -48,6 +49,7 @@ volumes:
     django_blog:
         external: 
             name: django_blog
+        read_only: true
     django_static:
         external: 
             name: django_static
