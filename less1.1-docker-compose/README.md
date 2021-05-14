@@ -46,9 +46,80 @@ docker volume create less11_django_static
 docker network create DjangoBlog
 ```
 # 3. Dockerfile для django контейнера:
-> app/Dockerfile
+```Dockerfile
+From python:3.7-alpine
+
+COPY ./django_blog/requirements.txt /app/
+
+RUN set -ex && apk add --no-cache --virtual .build-deps postgresql-dev build-base 
+RUN python -m venv /env && \
+    /env/bin/pip install --upgrade pip && \
+    /env/bin/pip install --no-cache-dir -r /app/requirements.txt
+RUN apk add --virtual rundeps $(scanelf --needed --nobanner --recursive /env \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u \
+        | xargs -r apk info --installed \
+        | sort -u) && apk del .build-deps
+
+COPY ./django_blog/ /app/
+WORKDIR /app
+
+ENV VIRTUAL_ENV /env
+ENV PATH /env/bin:$PATH
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+EXPOSE 8000
+```
 # 4. Docker-compose yaml
-> docker-compose.yaml
+```yaml
+version: '3'
+
+services: 
+    app:
+        restart: unless-stopped
+        build: ./app
+        command: python manage.py runserver 0.0.0.0:8000
+        expose: 
+            - "8000"
+        container_name: less11_app
+        volumes: 
+            - ./app/django_blog:/app/
+            - django_static:/app/static    
+        depends_on: 
+            - db
+    web:
+        restart: unless-stopped
+        image: nginx:1.20-alpine
+        volumes: 
+            - ./app/django_blog/config/nginx/django.conf:/etc/nginx/conf.d/default.conf:ro
+            - django_static:/src/static
+        ports: 
+            - "8000:8000"
+        container_name: less11_web        
+    db:
+        restart: unless-stopped
+        image: postgres:12.0-alpine
+        volumes: 
+            - postgres_data:/var/lib/postgresql/data
+        environment: 
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=postgres
+        ports: 
+            - "5432:5432"
+        container_name: less11_db        
+volumes: 
+    postgres_data:
+        name: less11_postgres_data
+    django_static:
+        external: 
+            name: less11_django_static
+networks: 
+    default:        
+        external: 
+            name: DjangoBlog
+```
+## Собираем\запускаем
 ```bash
 # собираем
 docker-compose build
@@ -71,7 +142,7 @@ python manage.py createsuperuser
 
 # 6. Исправляем косяки
 1. Ошибка `ModuleNotFoundError: No module named 'Blog.wsgi'` = скопировать файл wsgi.py в Blog/wsgi.py
-2. в app/django_blog/config/django.conf исзменить имя сервера `web` на `app`
+2. Конфиг NGINX: в app/django_blog/config/django.conf изменить имя сервера `web` на `app`
 ```bash
    upstream web {
    ip_hash;
