@@ -155,3 +155,4 @@ python manage.py createsuperuser
 ## Ссылочки:
 > https://semaphoreci.com/community/tutorials/dockerizing-a-python-django-web-application  
 > https://www.digitalocean.com/community/tutorials/how-to-build-a-django-and-gunicorn-application-with-docker
+> https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
