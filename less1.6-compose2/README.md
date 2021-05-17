@@ -16,6 +16,10 @@
 
 
 # Решение
+<<<<<<< HEAD
+=======
+
+>>>>>>> 512cff94d940995bc8aae205296a88a1491b340e
 ## 1.  создаем network\volume 
 ```bash
 docker network create L1_6_Nginx1
@@ -81,10 +85,14 @@ healthcheck:
             test: curl --fail -Ss http://nginx1:8001 || exit 1
 ```
 И если после этого прибить nginx1 (`docker stop less16_web1`), то через 30сек увидим, что контейнеру с графаной присвоится статус `Up (unhealthy)`
+<<<<<<< HEAD
 ## Добавить правила в фаервол GCP
     MyProject - Networking - Firewall
     Открыть порты 8001,8002
     
+=======
+
+>>>>>>> 512cff94d940995bc8aae205296a88a1491b340e
 ## Собираем\запускаем
 ```bash
 # собираем
