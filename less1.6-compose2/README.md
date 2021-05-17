@@ -80,11 +80,13 @@ networks:
 healthcheck:
             test: curl --fail -Ss http://nginx1:8001 || exit 1
 ```
-И если после этого прибить nginx1 (`docker stop less16_web1`), то через 30сек увидим, что контейнеру с графаной присвоится статус `Up (unhealthy)`
+И если после этого прибить nginx1 (`docker stop less16_web1`), то через 30сек увидим, то контейнеру с графаной присвоится статус `Up (unhealthy)`
+![](https://github.com/APATRI0T/JuneWay/raw/main/less1.6-compose2/HealthCheck%20works.png)
+
 ## Добавить правила в фаервол GCP
     MyProject - Networking - Firewall
     Открыть порты 8001,8002
-    
+
 ## Собираем\запускаем
 ```bash
 # собираем
