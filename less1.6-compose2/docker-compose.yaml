@@ -1,0 +1,42 @@
+version: '3.1'
+
+services: 
+    nginx1:
+        image: nginx:1.20-alpine
+        restart: unless-stopped
+        ports: 
+            - "8001:8001"
+        networks: 
+            - Nginx1 
+        volumes: 
+            - ./Nginx1/nginx1.conf:/etc/nginx/conf.d/default.conf
+        container_name: less16-web1
+
+    nginx2:
+        image: nginx:1.20-alpine
+        restart: unless-stopped
+        ports: 
+            - "8002:8002"
+        networks: 
+            - Nginx2
+        volumes: 
+            - ./Nginx2/nginx2.conf:/etc/nginx/conf.d/default.conf
+        container_name: less16-web2
+
+    grafana:
+        build: ./grafana
+        restart: unless-stopped
+        networks: 
+            - Nginx1
+            - Nginx2
+        container_name: less16-grafana
+        healthcheck:
+            test: curl --fail -Ss http://nginx1:8001 || exit 1
+
+networks: 
+    Nginx1:
+        external: 
+            name: L1_6_Nginx1
+    Nginx2:
+        external: 
+            name: L1_6_Nginx2
