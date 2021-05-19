@@ -34,4 +34,9 @@ juneway@juneway:~$ ./ls
 juneway@juneway:/root$ sudo /home/juneway/skukozh
 # >>> usage: /home/juneway/skukozh file
 
+# а другие команды не дает через sudo запускать. т.е. все насроиили верно. 
+juneway@juneway:/root$ sudo ls
+# >>> Sorry, user juneway is not allowed to execute '/bin/ls' as root on juneway.
+
+# 4. PROFIT!!!
 ```
