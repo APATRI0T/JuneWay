@@ -1,0 +1,106 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+    <a class="mt-5" href="/">вернуться назад</a>
+    <h1 class="mt-4">Админ панель</h1>
+
+
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Добавить новую статью
+</button>
+
+    {% if success %}
+        <p style="color:green">Запись добавлена</p>
+    {% endif %}
+
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for m in messages %}
+                {{ m }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if update %}
+        <p class="mt-4">Страница редактирования</p>
+         {% if success_update %}
+            <p style="color:green">Запись обновлена</p>
+        {% endif %}
+        <a class="mt-4" href="{% url 'edit_page' %}">Предидущая страница</a>
+
+         <form id="update_data"  method="post">
+              {% csrf_token %}
+              {{ form }}
+          </form>
+        <button form="update_data" type="submit" class="btn btn-primary">Сохранить</button>
+
+    {% else %}
+
+  <table class="table table-bordered mt-4">
+
+  <thead>
+
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Название</th>
+      <th scope="col">Текст</th>
+      <th scope="col">Редактирование</th>
+      <th scope="col">Удаление</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in list_articles %}
+    <tr{% if i.id|slugify == request.GET.id %} style="background:#F6A81A" {% endif %}>
+      <th scope="row">{{ i.id }}</th>
+      <td>{{ i.title }}</td>
+      <td>{{ i.text }}</td>
+      <td><a href="{% url 'update_page' i.id %}">редактировать</a></td>
+      <td>
+          <form id="delete_form" action="{% url 'delete_page' i.id %}" method="post">{% csrf_token %}</form>
+          <a href="javascript:void()" onclick='delete_question()'>удалить</a>
+          <script>
+              function delete_question() {
+                    if (confirm('Вы уверены?')) {
+                        document.getElementById('delete_form').submit()
+                    }
+              }
+          </script>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+    {% endif %}
+
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Новая статья</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form id="add_form"  method="post">
+              {% csrf_token %}
+              {{ form }}
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button form="add_form" type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock content %}
